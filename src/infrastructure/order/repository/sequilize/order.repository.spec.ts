@@ -192,26 +192,8 @@ describe("Order repository test", () => {
     const orderRepository = new OrderRepository();
     await orderRepository.create(order);
 
-    const orderModel = await OrderModel.findOne({
-      where: { id: order.id },
-      include: ["items"],
-    });
-
-    expect(orderModel.toJSON()).toStrictEqual({
-      id: "123",
-      customer_id: "123",
-      total: order.total(),
-      items: [
-        {
-          id: orderItem.id,
-          name: orderItem.name,
-          price: orderItem.price,
-          quantity: orderItem.quantity,
-          order_id: "123",
-          product_id: "123",
-        },
-      ],
-    });
+    const orderFound = await orderRepository.find(order.id);
+    expect(orderFound).toStrictEqual(order);
   });
 
   it("should find all orders", async () => {
@@ -248,40 +230,9 @@ describe("Order repository test", () => {
     await orderRepository.create(order1);
     await orderRepository.create(order2);
 
-    const foundOrders = await OrderModel.findAll({ include: ["items"] });
+    const foundOrders = await orderRepository.findAll();
 
     expect(foundOrders.length).toBe(2);
-    expect(foundOrders.map((order) => order.toJSON())).toStrictEqual([
-      {
-        id: order1.id,
-        customer_id: order1.customerId,
-        total: order1.total(),
-        items: [
-          {
-            id: orderItem1.id,
-            name: orderItem1.name,
-            price: orderItem1.price,
-            quantity: orderItem1.quantity,
-            order_id: order1.id,
-            product_id: product.id,
-          },
-        ],
-      },
-      {
-        id: order2.id,
-        customer_id: order2.customerId,
-        total: order2.total(),
-        items: [
-          {
-            id: orderItem2.id,
-            name: orderItem2.name,
-            price: orderItem2.price,
-            quantity: orderItem2.quantity,
-            order_id: order2.id,
-            product_id: product.id,
-          },
-        ],
-      },
-    ]);
+    expect(foundOrders).toStrictEqual([order1, order2]);
   });
 });

@@ -84,7 +84,10 @@ export default class OrderRepository implements OrderRepositoryInterface {
   }
 
   async find(id: string): Promise<Order> {
-    const orderModel = await OrderModel.findOne({ where: { id } });
+    const orderModel = await OrderModel.findOne({
+      where: { id },
+      include: ["items"],
+    });
     return new Order(
       orderModel.id,
       orderModel.customer_id,
@@ -102,7 +105,7 @@ export default class OrderRepository implements OrderRepositoryInterface {
   }
 
   async findAll(): Promise<Order[]> {
-    const orderModels = await OrderModel.findAll();
+    const orderModels = await OrderModel.findAll({ include: ["items"] });
     return orderModels.map(
       (orderModel) =>
         new Order(
