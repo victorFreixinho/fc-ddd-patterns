@@ -3,6 +3,11 @@ import ProductCreatedEvent from "../../product/event/product-created.event";
 import EventDispatcher from "./event-dispatcher";
 
 describe("Domain events tests", () => {
+  beforeEach(() => {
+    const eventDispatcher = new EventDispatcher();
+    eventDispatcher.unregisterAll();
+  });
+
   it("should register an event handler", () => {
     const eventDispatcher = new EventDispatcher();
     const eventHandler = new SendEmailWhenProductIsCreatedHandler();

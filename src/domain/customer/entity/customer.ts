@@ -1,4 +1,7 @@
+import EventDispatcher from "../../@shared/event/event-dispatcher";
+import CustomerCreatedEvent from "../event/customer-created.event";
 import Address from "../value-object/address";
+import CustomerAddressChangedEvent from "../event/customer-address-changed.event";
 
 export default class Customer {
   private _id: string;
@@ -11,6 +14,9 @@ export default class Customer {
     this._id = id;
     this._name = name;
     this.validate();
+
+    const customerCreatedEvent = new CustomerCreatedEvent({ customer: this });
+    new EventDispatcher().notify(customerCreatedEvent);
   }
 
   get id(): string {
@@ -42,9 +48,13 @@ export default class Customer {
   get Address(): Address {
     return this._address;
   }
-  
+
   changeAddress(address: Address) {
     this._address = address;
+    const customerAddressChangedEvent = new CustomerAddressChangedEvent({
+      customer: this,
+    });
+    new EventDispatcher().notify(customerAddressChangedEvent);
   }
 
   isActive(): boolean {
